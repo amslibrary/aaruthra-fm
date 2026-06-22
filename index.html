@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#061016">
+    <meta
+      name="description"
+      content="A futuristic, responsive online radio station website with resilient live audio streaming."
+    >
+    <title>NeonWave Radio</title>
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="stylesheet" href="styles.css">
+    <script src="config.js" defer></script>
+    <script src="script.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="topbar" aria-label="Main navigation">
+        <a class="brand" href="#home" aria-label="NeonWave Radio home">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>
+            <span class="brand-name" data-station-name>NeonWave</span>
+            <span class="brand-subtitle">24/7 web radio</span>
+          </span>
+        </a>
+        <nav class="nav-links" aria-label="Sections">
+          <a href="#live">Live</a>
+          <a href="#shows">Shows</a>
+          <a href="#schedule">Schedule</a>
+          <a href="#connect">Connect</a>
+        </nav>
+        <button class="icon-button" data-share type="button" aria-label="Share station">
+          <i data-lucide="share-2" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <main id="home">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-backdrop" aria-hidden="true">
+            <canvas id="waveCanvas"></canvas>
+            <div class="orbit orbit-one"></div>
+            <div class="orbit orbit-two"></div>
+          </div>
+          <div class="hero-content">
+            <p class="eyebrow">
+              <span class="live-dot" aria-hidden="true"></span>
+              <span data-live-label>Live signal standing by</span>
+            </p>
+            <h1 id="hero-title" data-station-title>NeonWave Radio</h1>
+            <p class="hero-copy" data-station-tagline>
+              Nonstop future beats, electronic journeys, and late-night frequencies streaming around the clock.
+            </p>
+            <div class="hero-actions">
+              <a class="primary-link" href="#live">
+                <i data-lucide="radio" aria-hidden="true"></i>
+                Tune in
+              </a>
+              <a class="secondary-link" href="#schedule">View schedule</a>
+            </div>
+          </div>
+          <aside class="signal-panel" aria-label="Current broadcast">
+            <div class="signal-head">
+              <span>Now transmitting</span>
+              <strong data-now-show>Midnight Drive</strong>
+            </div>
+            <div class="signal-meter" aria-hidden="true">
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <p data-now-description>Synthwave, melodic house, and deep-space electronica.</p>
+          </aside>
+        </section>
+
+        <section class="player-band" id="live" aria-labelledby="live-title">
+          <div class="section-heading">
+            <p class="eyebrow">Live stream</p>
+            <h2 id="live-title">Always-on audio console</h2>
+          </div>
+
+          <div class="player-layout">
+            <div class="player-console">
+              <div class="console-top">
+                <div>
+                  <span class="status-pill" data-status-pill>
+                    <span class="live-dot" aria-hidden="true"></span>
+                    <span data-status-text>Ready</span>
+                  </span>
+                  <h3 data-track-title>Live Broadcast</h3>
+                  <p data-track-meta>Streaming directly from the Aaruthra FM live source.</p>
+                </div>
+                <div class="time-stack">
+                  <span data-local-time>--:--</span>
+                  <small>local</small>
+                </div>
+              </div>
+
+              <div class="transport">
+                <button class="play-button" data-play type="button" aria-label="Play live stream">
+                  <i data-lucide="play" aria-hidden="true"></i>
+                </button>
+                <div class="stream-readout">
+                  <div class="readout-row">
+                    <span>Source</span>
+                    <strong data-stream-quality>Live MP3</strong>
+                  </div>
+                  <div class="connection-line" aria-hidden="true"><span data-connection-fill></span></div>
+                </div>
+                <button class="icon-button" data-mute type="button" aria-label="Mute audio">
+                  <i data-lucide="volume-2" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <label class="volume-control" for="volume">
+                <span>Volume</span>
+                <input id="volume" data-volume type="range" min="0" max="1" value="0.8" step="0.01">
+                <output data-volume-output for="volume">80%</output>
+              </label>
+
+              <div class="resilience-grid" aria-label="Streaming safeguards">
+                <div>
+                  <i data-lucide="refresh-cw" aria-hidden="true"></i>
+                  <span>Relay core</span>
+                </div>
+                <div>
+                  <i data-lucide="wifi" aria-hidden="true"></i>
+                  <span>Signal watch</span>
+                </div>
+                <div>
+                  <i data-lucide="smartphone" aria-hidden="true"></i>
+                  <span>Mobile deck</span>
+                </div>
+              </div>
+
+              <audio data-audio preload="none" crossorigin="anonymous"></audio>
+            </div>
+
+            <div class="stats-panel" aria-label="Station status">
+              <div>
+                <span class="stat-value" data-listeners>--</span>
+                <span class="stat-label">listeners</span>
+              </div>
+              <div>
+                <span class="stat-value">24/7</span>
+                <span class="stat-label">broadcast</span>
+              </div>
+              <div>
+                <span class="stat-value" data-uptime>online</span>
+                <span class="stat-label">signal</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-section" id="shows" aria-labelledby="shows-title">
+          <div class="section-heading">
+            <p class="eyebrow">Featured shows</p>
+            <h2 id="shows-title">Programs in rotation</h2>
+          </div>
+          <div class="show-grid" data-show-grid></div>
+        </section>
+
+        <section class="schedule-section" id="schedule" aria-labelledby="schedule-title">
+          <div class="section-heading">
+            <p class="eyebrow">Weekly pulse</p>
+            <h2 id="schedule-title">Broadcast schedule</h2>
+          </div>
+          <div class="schedule-list" data-schedule-list></div>
+        </section>
+
+        <section class="connect-section" id="connect" aria-labelledby="connect-title">
+          <div class="section-heading">
+            <p class="eyebrow">Stay tuned</p>
+            <h2 id="connect-title">Signal links</h2>
+          </div>
+          <div class="connect-grid">
+            <a href="#" data-social="website">
+              <i data-lucide="globe" aria-hidden="true"></i>
+              <span>Website</span>
+            </a>
+            <a href="#" data-social="instagram">
+              <i data-lucide="instagram" aria-hidden="true"></i>
+              <span>Instagram</span>
+            </a>
+            <a href="#" data-social="youtube">
+              <i data-lucide="youtube" aria-hidden="true"></i>
+              <span>YouTube</span>
+            </a>
+            <a href="#" data-social="email">
+              <i data-lucide="mail" aria-hidden="true"></i>
+              <span>Email</span>
+            </a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span data-footer-name>NeonWave Radio</span>
+        <span>Broadcasting beyond the horizon</span>
+      </footer>
+    </div>
+  </body>
+</html>
