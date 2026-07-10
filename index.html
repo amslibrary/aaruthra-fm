@@ -6,34 +6,538 @@
     <meta name="theme-color" content="#061016">
     <meta
       name="description"
-      content="A futuristic, responsive online radio station website with resilient live audio streaming."
+      content="Aaruthra FM live online radio station."
     >
-    <title>NeonWave Radio</title>
-    <link rel="preconnect" href="https://unpkg.com">
-    <link rel="stylesheet" href="styles.css">
-    <script src="config.js" defer></script>
-    <script src="script.js" defer></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+    <title>Aaruthra FM Radio</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #061016;
+        --panel: rgba(12, 38, 48, 0.92);
+        --text: #f4fbff;
+        --muted: #9db4bd;
+        --line: rgba(172, 235, 255, 0.16);
+        --cyan: #36e5ff;
+        --green: #8aff8a;
+        --rose: #ff5ea8;
+        --amber: #ffd36a;
+        --ink: #031014;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        min-width: 320px;
+        margin: 0;
+        color: var(--text);
+        background:
+          linear-gradient(140deg, rgba(255, 94, 168, 0.11), transparent 32%),
+          radial-gradient(circle at 74% 18%, rgba(54, 229, 255, 0.22), transparent 28%),
+          linear-gradient(180deg, #061016 0%, #08171b 46%, #111510 100%);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .site-shell {
+        overflow: hidden;
+      }
+
+      .topbar {
+        position: fixed;
+        z-index: 20;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: grid;
+        grid-template-columns: minmax(170px, 1fr) auto;
+        align-items: center;
+        gap: 18px;
+        width: min(1180px, calc(100% - 32px));
+        margin: 16px auto 0;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(3, 16, 20, 0.72);
+        box-shadow: 0 12px 34px rgba(0, 0, 0, 0.24);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 11px;
+        min-width: 0;
+      }
+
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+        flex: 0 0 auto;
+        border: 1px solid rgba(54, 229, 255, 0.55);
+        border-radius: 50%;
+        background:
+          linear-gradient(90deg, transparent 38%, rgba(54, 229, 255, 0.9) 39% 43%, transparent 44%),
+          radial-gradient(circle, rgba(255, 94, 168, 0.9) 0 18%, transparent 19%),
+          radial-gradient(circle, rgba(54, 229, 255, 0.42), rgba(54, 229, 255, 0.05));
+        box-shadow: 0 0 28px rgba(54, 229, 255, 0.25);
+      }
+
+      .brand-name,
+      .brand-subtitle {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .brand-name {
+        font-size: 0.98rem;
+        font-weight: 800;
+      }
+
+      .brand-subtitle {
+        color: var(--muted);
+        font-size: 0.72rem;
+      }
+
+      .nav-links {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .nav-links a {
+        padding: 8px 10px;
+        border-radius: 6px;
+      }
+
+      .nav-links a:hover,
+      .nav-links a:focus-visible {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .hero {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+        gap: 30px;
+        min-height: 92vh;
+        padding: 148px max(24px, calc((100vw - 1180px) / 2)) 58px;
+        isolation: isolate;
+      }
+
+      .hero-backdrop {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+      }
+
+      #waveCanvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        opacity: 0.82;
+      }
+
+      .orbit {
+        position: absolute;
+        border: 1px solid rgba(54, 229, 255, 0.24);
+        border-radius: 50%;
+        transform: rotateX(62deg) rotateZ(-10deg);
+      }
+
+      .orbit-one {
+        right: -110px;
+        top: 18%;
+        width: 540px;
+        height: 540px;
+      }
+
+      .orbit-two {
+        left: -160px;
+        bottom: 2%;
+        width: 420px;
+        height: 420px;
+        border-color: rgba(255, 94, 168, 0.18);
+      }
+
+      .hero-content {
+        align-self: center;
+        max-width: 780px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0 0 14px;
+        color: var(--green);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .live-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 16px var(--green);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 11ch;
+        margin-bottom: 20px;
+        font-size: clamp(4rem, 11vw, 9.6rem);
+        line-height: 0.86;
+        letter-spacing: 0;
+      }
+
+      .hero-copy {
+        max-width: 650px;
+        color: #c9d9df;
+        font-size: clamp(1.05rem, 2vw, 1.28rem);
+        line-height: 1.65;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 30px;
+      }
+
+      .primary-link,
+      .secondary-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 18px;
+        border-radius: 8px;
+        font-weight: 800;
+      }
+
+      .primary-link {
+        color: var(--ink);
+        background: linear-gradient(135deg, var(--cyan), var(--green));
+      }
+
+      .secondary-link {
+        border: 1px solid var(--line);
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .signal-panel {
+        align-self: end;
+        padding: 22px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(11, 28, 35, 0.78);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+        backdrop-filter: blur(20px);
+      }
+
+      .signal-head {
+        display: grid;
+        gap: 6px;
+        margin-bottom: 18px;
+      }
+
+      .signal-head span,
+      .signal-panel p,
+      .footer {
+        color: var(--muted);
+      }
+
+      .signal-head strong {
+        font-size: 1.45rem;
+      }
+
+      .signal-meter {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 6px;
+        align-items: end;
+        height: 92px;
+        margin-bottom: 18px;
+      }
+
+      .signal-meter span {
+        min-width: 0;
+        height: 24%;
+        border-radius: 4px 4px 0 0;
+        background: linear-gradient(180deg, var(--rose), var(--cyan));
+        animation: bounce 1s infinite ease-in-out;
+      }
+
+      .signal-meter span:nth-child(2n) {
+        animation-delay: -0.21s;
+      }
+
+      .signal-meter span:nth-child(3n) {
+        animation-delay: -0.37s;
+      }
+
+      .signal-meter span:nth-child(4n) {
+        animation-delay: -0.53s;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          height: 25%;
+          opacity: 0.55;
+        }
+
+        50% {
+          height: 100%;
+          opacity: 1;
+        }
+      }
+
+      .player-band,
+      .content-section,
+      .connect-section {
+        padding: 86px max(24px, calc((100vw - 1180px) / 2));
+      }
+
+      .player-band {
+        background: linear-gradient(180deg, rgba(4, 13, 16, 0.7), rgba(9, 25, 26, 0.88));
+      }
+
+      .section-heading {
+        max-width: 680px;
+        margin-bottom: 28px;
+      }
+
+      .section-heading h2 {
+        margin: 0;
+        font-size: clamp(2.1rem, 4vw, 4rem);
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      .aaruthra-player-card,
+      .show-card,
+      .connect-grid a {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 18px 52px rgba(0, 0, 0, 0.24);
+      }
+
+      .aaruthra-player-card {
+        width: min(760px, 100%);
+        padding: clamp(18px, 3vw, 30px);
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+        padding: 6px 9px;
+        border: 1px solid rgba(138, 255, 138, 0.28);
+        border-radius: 999px;
+        color: var(--green);
+        background: rgba(138, 255, 138, 0.08);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      .aaruthra-player-card h3 {
+        margin-bottom: 6px;
+        font-size: clamp(1.7rem, 4vw, 3.2rem);
+        line-height: 1;
+      }
+
+      .aaruthra-player-card p {
+        max-width: 520px;
+        color: var(--muted);
+      }
+
+      .aaruthra-player-card audio {
+        display: block;
+        width: 100%;
+        margin-top: 20px;
+      }
+
+      .full-player-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        margin-top: 16px;
+        padding: 0 14px;
+        border-radius: 8px;
+        color: var(--ink);
+        background: linear-gradient(135deg, var(--cyan), var(--green));
+        font-weight: 800;
+      }
+
+      .show-grid,
+      .connect-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .show-card {
+        min-height: 180px;
+        padding: 22px;
+        background:
+          linear-gradient(150deg, rgba(54, 229, 255, 0.16), transparent 52%),
+          var(--panel);
+      }
+
+      .show-card strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 1.45rem;
+      }
+
+      .show-card span {
+        display: inline-flex;
+        margin-bottom: 34px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        color: var(--ink);
+        background: var(--amber);
+        font-size: 0.78rem;
+        font-weight: 900;
+      }
+
+      .show-card p {
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .connect-section {
+        background: rgba(255, 255, 255, 0.025);
+      }
+
+      .connect-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .connect-grid a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 88px;
+        gap: 12px;
+        padding: 16px;
+        font-weight: 800;
+      }
+
+      .connect-grid a:hover,
+      .connect-grid a:focus-visible {
+        border-color: rgba(54, 229, 255, 0.6);
+        transform: translateY(-2px);
+      }
+
+      .footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 28px max(24px, calc((100vw - 1180px) / 2));
+        border-top: 1px solid var(--line);
+        font-size: 0.86rem;
+      }
+
+      @media (max-width: 900px) {
+        .topbar,
+        .hero,
+        .show-grid,
+        .connect-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .hero {
+          min-height: auto;
+          padding-top: 124px;
+        }
+
+        .signal-panel {
+          align-self: auto;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .topbar {
+          width: calc(100% - 20px);
+          margin-top: 10px;
+        }
+
+        h1 {
+          max-width: 100%;
+          font-size: clamp(2.7rem, 16vw, 4rem);
+          line-height: 0.94;
+          overflow-wrap: break-word;
+        }
+
+        .hero-actions,
+        .footer {
+          align-items: stretch;
+          flex-direction: column;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="site-shell">
       <header class="topbar" aria-label="Main navigation">
-        <a class="brand" href="#home" aria-label="NeonWave Radio home">
+        <a class="brand" href="#home" aria-label="Aaruthra FM home">
           <span class="brand-mark" aria-hidden="true"></span>
           <span>
-            <span class="brand-name" data-station-name>NeonWave</span>
+            <span class="brand-name">Aaruthra FM</span>
             <span class="brand-subtitle">24/7 web radio</span>
           </span>
         </a>
         <nav class="nav-links" aria-label="Sections">
           <a href="#live">Live</a>
           <a href="#shows">Shows</a>
-          <a href="#schedule">Schedule</a>
           <a href="#connect">Connect</a>
         </nav>
-        <button class="icon-button" data-share type="button" aria-label="Share station">
-          <i data-lucide="share-2" aria-hidden="true"></i>
-        </button>
       </header>
 
       <main id="home">
@@ -46,127 +550,80 @@
           <div class="hero-content">
             <p class="eyebrow">
               <span class="live-dot" aria-hidden="true"></span>
-              <span data-live-label>Live signal standing by</span>
+              <span>Live signal online</span>
             </p>
-            <h1 id="hero-title" data-station-title>NeonWave Radio</h1>
-            <p class="hero-copy" data-station-tagline>
-              Nonstop future beats, electronic journeys, and late-night frequencies streaming around the clock.
+            <h1 id="hero-title">Aaruthra FM Radio</h1>
+            <p class="hero-copy">
+              Listen live to Aaruthra FM with a clean, mobile-friendly online radio player.
             </p>
             <div class="hero-actions">
-              <a class="primary-link" href="#live">
-                <i data-lucide="radio" aria-hidden="true"></i>
-                Tune in
-              </a>
-              <a class="secondary-link" href="#schedule">View schedule</a>
+              <a class="primary-link" href="#live">Tune in</a>
+              <a class="secondary-link" href="https://aaruthrafm.radio12345.com/" target="_blank" rel="noopener">Full player</a>
             </div>
           </div>
           <aside class="signal-panel" aria-label="Current broadcast">
             <div class="signal-head">
               <span>Now transmitting</span>
-              <strong data-now-show>Midnight Drive</strong>
+              <strong>Live Broadcast</strong>
             </div>
             <div class="signal-meter" aria-hidden="true">
               <span></span><span></span><span></span><span></span><span></span><span></span>
               <span></span><span></span><span></span><span></span><span></span><span></span>
             </div>
-            <p data-now-description>Synthwave, melodic house, and deep-space electronica.</p>
+            <p>Aaruthra FM live streaming direct from the station source.</p>
           </aside>
         </section>
 
         <section class="player-band" id="live" aria-labelledby="live-title">
           <div class="section-heading">
             <p class="eyebrow">Live stream</p>
-            <h2 id="live-title">Always-on audio console</h2>
+            <h2 id="live-title">Aaruthra FM Player</h2>
           </div>
 
-          <div class="player-layout">
-            <div class="player-console">
-              <div class="console-top">
-                <div>
-                  <span class="status-pill" data-status-pill>
-                    <span class="live-dot" aria-hidden="true"></span>
-                    <span data-status-text>Ready</span>
-                  </span>
-                  <h3 data-track-title>Live Broadcast</h3>
-                  <p data-track-meta>Streaming directly from the Aaruthra FM live source.</p>
-                </div>
-                <div class="time-stack">
-                  <span data-local-time>--:--</span>
-                  <small>local</small>
-                </div>
-              </div>
+          <div class="aaruthra-player-card" aria-label="Aaruthra FM live player">
+            <span class="status-pill">
+              <span class="live-dot" aria-hidden="true"></span>
+              <span>Live Radio</span>
+            </span>
+            <h3>Aaruthra FM</h3>
+            <p>Press play to listen live from the Aaruthra FM streaming source.</p>
 
-              <div class="transport">
-                <button class="play-button" data-play type="button" aria-label="Play live stream">
-                  <i data-lucide="play" aria-hidden="true"></i>
-                </button>
-                <div class="stream-readout">
-                  <div class="readout-row">
-                    <span>Source</span>
-                    <strong data-stream-quality>Live MP3</strong>
-                  </div>
-                  <div class="connection-line" aria-hidden="true"><span data-connection-fill></span></div>
-                </div>
-                <button class="icon-button" data-mute type="button" aria-label="Mute audio">
-                  <i data-lucide="volume-2" aria-hidden="true"></i>
-                </button>
-              </div>
+            <audio
+              controls
+              preload="none"
+              src="https://uk18freenew.listen2myradio.com/live.mp3?typeportmount=s1_7181_stream_66847433"
+            >
+              Your browser does not support the audio player.
+            </audio>
 
-              <label class="volume-control" for="volume">
-                <span>Volume</span>
-                <input id="volume" data-volume type="range" min="0" max="1" value="0.8" step="0.01">
-                <output data-volume-output for="volume">80%</output>
-              </label>
-
-              <div class="resilience-grid" aria-label="Streaming safeguards">
-                <div>
-                  <i data-lucide="refresh-cw" aria-hidden="true"></i>
-                  <span>Relay core</span>
-                </div>
-                <div>
-                  <i data-lucide="wifi" aria-hidden="true"></i>
-                  <span>Signal watch</span>
-                </div>
-                <div>
-                  <i data-lucide="smartphone" aria-hidden="true"></i>
-                  <span>Mobile deck</span>
-                </div>
-              </div>
-
-              <audio data-audio preload="none" crossorigin="anonymous"></audio>
-            </div>
-
-            <div class="stats-panel" aria-label="Station status">
-              <div>
-                <span class="stat-value" data-listeners>--</span>
-                <span class="stat-label">listeners</span>
-              </div>
-              <div>
-                <span class="stat-value">24/7</span>
-                <span class="stat-label">broadcast</span>
-              </div>
-              <div>
-                <span class="stat-value" data-uptime>online</span>
-                <span class="stat-label">signal</span>
-              </div>
-            </div>
+            <a class="full-player-link" href="https://aaruthrafm.radio12345.com/" target="_blank" rel="noopener">
+              Open full radio player
+            </a>
           </div>
         </section>
 
         <section class="content-section" id="shows" aria-labelledby="shows-title">
           <div class="section-heading">
-            <p class="eyebrow">Featured shows</p>
+            <p class="eyebrow">On air</p>
             <h2 id="shows-title">Programs in rotation</h2>
           </div>
-          <div class="show-grid" data-show-grid></div>
-        </section>
-
-        <section class="schedule-section" id="schedule" aria-labelledby="schedule-title">
-          <div class="section-heading">
-            <p class="eyebrow">Weekly pulse</p>
-            <h2 id="schedule-title">Broadcast schedule</h2>
+          <div class="show-grid">
+            <article class="show-card">
+              <span>Live</span>
+              <strong>Aaruthra FM</strong>
+              <p>Nonstop live music and radio programming.</p>
+            </article>
+            <article class="show-card">
+              <span>24/7</span>
+              <strong>Web Radio</strong>
+              <p>Listen from desktop, tablet, or mobile.</p>
+            </article>
+            <article class="show-card">
+              <span>Online</span>
+              <strong>Global Stream</strong>
+              <p>Open the full player if the direct stream is temporarily unavailable.</p>
+            </article>
           </div>
-          <div class="schedule-list" data-schedule-list></div>
         </section>
 
         <section class="connect-section" id="connect" aria-labelledby="connect-title">
@@ -175,30 +632,92 @@
             <h2 id="connect-title">Signal links</h2>
           </div>
           <div class="connect-grid">
-            <a href="#" data-social="website">
-              <i data-lucide="globe" aria-hidden="true"></i>
-              <span>Website</span>
-            </a>
-            <a href="#" data-social="instagram">
-              <i data-lucide="instagram" aria-hidden="true"></i>
-              <span>Instagram</span>
-            </a>
-            <a href="#" data-social="youtube">
-              <i data-lucide="youtube" aria-hidden="true"></i>
-              <span>YouTube</span>
-            </a>
-            <a href="#" data-social="email">
-              <i data-lucide="mail" aria-hidden="true"></i>
-              <span>Email</span>
-            </a>
+            <a href="https://aaruthrafm.radio12345.com/" target="_blank" rel="noopener">Radio12345</a>
+            <a href="https://aaruthra-fm.vercel.app/" target="_blank" rel="noopener">Website</a>
+            <a href="mailto:studio@example.com">Email</a>
+            <a href="#live">Listen</a>
           </div>
         </section>
       </main>
 
       <footer class="footer">
-        <span data-footer-name>NeonWave Radio</span>
-        <span>Broadcasting beyond the horizon</span>
+        <span>Aaruthra FM Radio</span>
+        <span>Broadcasting online</span>
       </footer>
     </div>
+
+    <script>
+      const canvas = document.querySelector("#waveCanvas");
+      const ctx = canvas.getContext("2d");
+      let visualFrame = 0;
+
+      function sizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+        canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function drawGrid(width, height, time) {
+        ctx.strokeStyle = "rgba(172, 235, 255, 0.08)";
+        ctx.lineWidth = 1;
+        const spacing = 58;
+        const offset = (time * 22) % spacing;
+        for (let x = -spacing; x < width + spacing; x += spacing) {
+          ctx.beginPath();
+          ctx.moveTo(x + offset, 0);
+          ctx.lineTo(x - 160 + offset, height);
+          ctx.stroke();
+        }
+        for (let y = 0; y < height; y += spacing) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y);
+          ctx.stroke();
+        }
+      }
+
+      function drawSignal(width, y, time, color, phase) {
+        ctx.beginPath();
+        for (let x = 0; x <= width; x += 10) {
+          const amp = 34 + Math.sin(time + phase) * 16;
+          const wave = Math.sin(x * 0.016 + time * 3 + phase) * amp;
+          const pulse = Math.cos(x * 0.007 - time * 2) * 18;
+          const py = y + wave + pulse;
+          if (x === 0) ctx.moveTo(x, py);
+          else ctx.lineTo(x, py);
+        }
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 18;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+
+      function drawWave() {
+        const rect = canvas.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+        const mid = height * 0.48;
+        const time = visualFrame * 0.012;
+
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = "rgba(6, 16, 22, 0.24)";
+        ctx.fillRect(0, 0, width, height);
+        drawGrid(width, height, time);
+        drawSignal(width, mid, time, "#36e5ff", 0);
+        drawSignal(width, mid + 34, time * 1.2, "#ff5ea8", 1.8);
+        drawSignal(width, mid - 46, time * 0.82, "#8aff8a", 3.2);
+
+        visualFrame += 1;
+        requestAnimationFrame(drawWave);
+      }
+
+      window.addEventListener("resize", sizeCanvas);
+      sizeCanvas();
+      drawWave();
+    </script>
   </body>
 </html>
