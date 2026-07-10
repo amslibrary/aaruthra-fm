@@ -1,4 +1,4 @@
-# NeonWave Radio static website
+# Aaruthra FM Radio static website
 
 This is a backend-free web radio website designed for GitHub Pages or any static host.
 
